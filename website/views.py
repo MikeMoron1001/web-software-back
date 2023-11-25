@@ -119,7 +119,6 @@ def nomina():
 
         # Sacar lista de usuarios
         lista_usuarios = list(set([i.usuario for i in usuarios]))
-        print(lista_usuarios)
         produccion_por_usuario = []
         pago_total_por_usuario = []
 
@@ -146,15 +145,11 @@ def nomina():
                 .all()
             )
             
-            for produccion in producciones:
-                print(produccion.nombre_producto, produccion.cantidad, produccion.precio_producto, produccion.precio_paquete)
- 
-            for usuario_rol in lista_usuarios:
-                # Procesar resultados de producción
-                produccion_q = [(produccion.nombre_producto, int(produccion.cantidad // 12), int(produccion.cantidad // 12)*produccion.precio_paquete, produccion.cantidad % 12, (produccion.cantidad % 12)*produccion.precio_producto) for produccion in producciones]
-                produccion_por_usuario.append((usuario_rol, produccion_q))
-                # Calcular pago total por usuario
-                pago_total_por_usuario.append((usuario_rol, sum([produccion[2] for produccion in produccion_q]) + sum([produccion[4] for produccion in produccion_q])))
+            # Procesar resultados de producción
+            produccion_q = [(produccion.nombre_producto, int(produccion.cantidad // 12), int(produccion.cantidad // 12)*produccion.precio_paquete, produccion.cantidad % 12, (produccion.cantidad % 12)*produccion.precio_producto) for produccion in producciones]
+            produccion_por_usuario.append((usuario_rol, produccion_q))
+            # Calcular pago total por usuario
+            pago_total_por_usuario.append((usuario_rol, sum([produccion[2] for produccion in produccion_q]) + sum([produccion[4] for produccion in produccion_q])))
 
         return render_template('admin_nomina.html', usuario=current_user, rol=usuario_q.rol, fecha_inicio=fecha_inicio, fecha_fin=(fecha_fin - timedelta(days=1)).strftime('%Y-%m-%d') , producciones=produccion_por_usuario, pago_total=pago_total_por_usuario)
 
